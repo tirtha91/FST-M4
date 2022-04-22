@@ -1,0 +1,61 @@
+hive> CREATE TABLE files (line STRING);
+OK
+Time taken: 0.847 seconds
+hive> LOAD DATA LOCAL INPATH '/file01.txt' INTO TABLE files;
+Loading data to table default.files
+OK
+Time taken: 0.737 seconds
+hive> CREATE TABLE word_counts AS
+    > SELECT word, count(1) AS count FROM
+    > (SELECT explode(split(line, ' ')) AS word FROM files) w
+    > GROUP BY word
+    > ORDER BY word;
+Query ID = root_20220416044629_7e78bc8f-d8a8-4695-a33f-354ed61d3af0
+Total jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1650081813092_0002, Tracking URL = http://8b3adc2d26f7:8088/proxy/application_1650081813092_0002/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1650081813092_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2022-04-16 04:46:38,890 Stage-1 map = 0%,  reduce = 0%
+2022-04-16 04:46:44,175 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.95 sec
+2022-04-16 04:46:49,347 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 4.8 sec
+MapReduce Total cumulative CPU time: 4 seconds 800 msec
+Ended Job = job_1650081813092_0002
+Launching Job 2 out of 2
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1650081813092_0003, Tracking URL = http://8b3adc2d26f7:8088/proxy/application_1650081813092_0003/
+Kill Command = /usr/local/hadoop/bin/mapred job  -kill job_1650081813092_0003
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2022-04-16 04:47:01,252 Stage-2 map = 0%,  reduce = 0%
+2022-04-16 04:47:06,407 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 1.63 sec
+2022-04-16 04:47:11,546 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 4.22 sec
+MapReduce Total cumulative CPU time: 4 seconds 220 msec
+Ended Job = job_1650081813092_0003
+Moving data to directory hdfs://8b3adc2d26f7:9000/user/hive/warehouse/word_counts
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 4.8 sec   HDFS Read: 8170 HDFS Write: 166 SUCCESS
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 4.22 sec   HDFS Read: 7297 HDFS Write: 97 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 20 msec
+OK
+Time taken: 43.846 seconds
+hive>
+hive> SELECT * FROM word_counts;
+OK
+Bye     1
+Hello   1
+World   2
+Time taken: 2.216 seconds, Fetched: 3 row(s)
+hive>
